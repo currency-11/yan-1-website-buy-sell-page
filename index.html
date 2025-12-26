@@ -1,206 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buy &amp; Sell App</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradeNest</title>
   <style>
-    /* -------- Base Styles -------- */
+    /* ==== Variables ==== */
+    :root {
+      --primary: #007bff;
+      --primary-dark: #0056b3;
+      --white: #fff;
+      --gray-light: #fafafa;
+      --gray-border: #e0e0e0;
+      --success: #28a745;
+      --error: #dc3545;
+    }
+
+    /* ==== Base ==== */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f8;
       margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff;               /* background colour removed */
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
     }
-
     .container {
-      background: #fff;
+      background: var(--white);
       width: 95%;
-      max-width: 700px;
+      max-width: 800px;
       margin-top: 30px;
-      padding: 25px;
+      padding: 25px 30px;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-
     h1 {
       text-align: center;
-      margin-bottom: 25px;
-      color: #333;
-      font-size: 24px;
-    }
-
-    /* -------- Buttons -------- */
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 10px 25px;
-      border: none;
-      border-radius: 6px;
-      background: #007bff;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    /* -------- Forms -------- */
-    form {
-      display: none;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    label {
-      font-weight: bold;
+      margin: 0 0 15px;
+      font-size: 28px;
       color: #333;
     }
-
-    input,
-    textarea {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-      width: 100%;
-      box-sizing: border-box;
+    h1 .site-symbol {
+      font-size: 0.8em;
+      margin-left: 5px;
     }
-
-    textarea {
-      resize: vertical;
-    }
-
-    /* -------- Items Section -------- */
-    #items-container {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .item-card {
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 25px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .item-card h3 {
-      margin: 0 0 10px 0;
-      color: #222;
+    .tagline {
+      text-align: center;
       font-size: 18px;
-    }
-
-    .item-card p {
-      margin: 5px 0;
-      color: #555;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .item-card a.external-link {
-      color: #0069d9;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    iframe {
-      width: 100%;
-      height: 250px;
-      border: none;
-      border-radius: 6px;
+      background: linear-gradient(45deg,#ff416c,#ff4b2b,#0f2027,#203a43);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 3s ease-in-out infinite;
       margin-bottom: 10px;
-      background: #f0f0f0;
+    }
+    @keyframes shine{
+      0%,100%{filter:brightness(1);}
+      50%{filter:brightness(1.3);}
+    }
+    .subtagline{
+      text-align:center;
+      font-size:16px;
+      color:#555;
+      margin-bottom:25px;
     }
 
-    /* -------- Messages -------- */
-    .success,
-    .error {
-      text-align: center;
-      margin-top: 15px;
-      font-weight: bold;
+    /* ==== Buttons ==== */
+    .button-group{
+      display:flex;
+      justify-content:center;
+      gap:15px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
     }
-    .success { color: green; }
-    .error { color: red; }
-
-    /* -------- Modal -------- */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
+    button{
+      padding:10px 25px;
+      border:none;
+      border-radius:6px;
+      background:var(--primary);
+      color:var(--white);
+      font-size:16px;
+      cursor:pointer;
+      transition:background .3s;
     }
-    .modal.active { display: flex; }
-    .modal .modal-content {
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 10px;
-      max-width: 90%;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .modal .modal-content h2 {
-      margin: 0 0 15px 0;
-      font-size: 22px;
-      color: #333;
-    }
-    .modal .modal-content p {
-      margin-bottom: 20px;
-      font-size: 16px;
-      color: #333;
-    }
-    .modal .modal-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
+    button:hover{
+      background:var(--primary-dark);
     }
 
-    /* -------- Responsive Design -------- */
-    @media (max-width: 768px) {
-      h1 { font-size: 20px; }
-      iframe { height: 220px; }
-      button { font-size: 15px; padding: 8px 18px; }
+    /* ==== Forms ==== */
+    form{
+      display:none;
+      flex-direction:column;
+      gap:15px;
     }
-    @media (max-width: 480px) {
-      .container { width: 95%; padding: 20px; }
-      iframe { height: 200px; }
-      label { font-size: 14px; }
-      input, textarea { font-size: 14px; }
-      .item-card h3 { font-size: 16px; }
-      .item-card p { font-size: 13px; }
+    label{
+      font-weight:bold;
+      color:#333;
+    }
+    input,textarea,select{
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:15px;
+      width:100%;
+      box-sizing:border-box;
+    }
+    textarea{ resize:vertical; }
+
+    /* ==== Buy Section ==== */
+    #buySection{ display:none; }
+    .search-bar{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+    .arrow-symbol{
+      cursor:pointer;
+      user-select:none;
+      font-weight:bold;
+    }
+    #idSelect{
+      display:none;
+      padding:5px;
+    }
+
+    /* ==== Items Grid ==== */
+    #items-container{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+      gap:20px;
+    }
+    .item-card{
+      background:var(--gray-light);
+      border:1px solid var(--gray-border);
+      border-radius:10px;
+      padding:15px;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);
+      position:relative;
+    }
+    .item-card h3{
+      margin:10px 0 5px;
+      font-size:18px;
+      color:#222;
+    }
+    .item-card p{
+      margin:4px 0;
+      font-size:14px;
+      color:#555;
+    }
+    .item-card a.external-link{
+      color:#0069d9;
+      text-decoration:underline;
+    }
+    .media-wrapper{
+      width:100%;
+      overflow:hidden;
+      border-radius:6px;
+    }
+    .media-wrapper img,
+    .media-wrapper video,
+    .media-wrapper audio,
+    .media-wrapper iframe{
+      width:100%;
+      display:block;
+    }
+    .fullscreen-btn,
+    .share-btn{
+      margin-top:5px;
+      padding:5px 10px;
+      font-size:13px;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
+    }
+    .fullscreen-btn{ background:#555; color:var(--white); }
+    .share-btn{ background:#28a745; color:var(--white); }
+
+    .highlight{
+      outline:3px solid #ff9800;
+      animation:pulse 1.5s infinite;
+    }
+    @keyframes pulse{
+      0%{outline-color:#ff9800;}
+      50%{outline-color:#ffcc80;}
+      100%{outline-color:#ff9800;}
+    }
+
+    /* ==== Messages ==== */
+    .success,.error{
+      text-align:center;
+      font-weight:bold;
+      margin-top:10px;
+    }
+    .success{color:var(--success);}
+    .error{color:var(--error);}
+
+    /* ==== Toast ==== */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:90px;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.8);
+      color:var(--white);
+      padding:10px 20px;
+      border-radius:6px;
+      opacity:0;
+      transition:opacity .3s;
+      z-index:2000;
+    }
+
+    /* ==== Modal (Feedback) ==== */
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.5);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:3000;
+    }
+    .modal.active{display:flex;}
+    .modal .modal-content{
+      background:var(--white);
+      padding:20px 30px;
+      border-radius:10px;
+      max-width:90%;
+      text-align:center;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
+    }
+    .modal .modal-content h2{margin-top:0;}
+    .modal .modal-content p{margin:15px 0;}
+
+    /* ==== Fullscreen Overlay ==== */
+    .fullscreen-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.9);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:5000;
+    }
+    .fullscreen-overlay.active{display:flex;}
+    .overlay-content{
+      position:relative;
+      width:90%;
+      height:90%;
+    }
+    .overlay-content iframe{
+      width:100%;
+      height:100%;
+      border:none;
+    }
+    .close-overlay{
+      position:absolute;
+      top:8px;
+      right:8px;
+      background:rgba(255,255,255,.8);
+      border:none;
+      border-radius:4px;
+      padding:5px 8px;
+      cursor:pointer;
+      font-size:16px;
+    }
+
+    /* ==== Floating Chat ==== */
+    #chatBubble{
+      position:fixed;
+      right:20px;
+      bottom:110px;
+      font-size:2rem;
+      cursor:pointer;
+      z-index:4000;
+    }
+
+    /* ==== Site Symbol ==== */
+    #siteSymbol{
+      position:fixed;
+      top:20px;
+      left:20px;
+      font-size:2rem;
+    }
+
+    /* ==== Footer (always bottom) ==== */
+    footer{
+      text-align:center;
+      font-size:14px;
+      color:#777;
+      margin-top:30px;
+    }
+
+    /* ==== Responsiveness ==== */
+    @media (max-width:768px){
+      h1{font-size:24px;}
+      button{font-size:15px;padding:8px 20px;}
+    }
+    @media (max-width:480px){
+      .container{padding:20px;}
+      .tagline{font-size:16px;}
+      .subtagline{font-size:14px;}
     }
   </style>
 </head>
 <body>
 
+  <!-- Site-wide symbol -->
+  <div id="siteSymbol">⚡</div>
+
   <div class="container">
-    <h1>Buy &amp; Sell App</h1>
+    <h1>TradeNest<span class="site-symbol">🛒</span></h1>
+    <p class="tagline">“A trusted marketplace where buying and selling come together. Discover great deals, list items effortlessly, and connect with real people—fast, simple, and secure.”</p>
+    <p class="subtagline">“Buy smarter. Sell faster. Connect instantly.”</p>
 
     <div class="button-group">
       <button id="sellBtn">Sell</button>
       <button id="buyBtn">Buy</button>
     </div>
 
-    <!-- SELL FORM -->
+    <!-- ==== SELL FORM ==== -->
     <form id="sellForm">
       <label>Archive URL (only from archive.org)</label>
       <input type="url" id="archive_url" placeholder="https://archive.org/details/..." required>
@@ -240,263 +361,457 @@
       <div id="responseMsg"></div>
     </form>
 
-    <!-- ITEMS CONTAINER -->
-    <div id="items-container"></div>
+    <!-- ==== BUY SECTION ==== -->
+    <div id="buySection">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search by item name...">
+        <select id="searchMode">
+          <option value="name">Search by Name</option>
+          <option value="id">Search by ID</option>
+        </select>
+        <button id="searchBtn">Search</button>
+        <button id="backBtn">Back</button>
+        <span id="arrowSymbol" class="arrow-symbol">&#8594;</span>
+        <select id="idSelect"></select>
+      </div>
 
-    <!-- MODAL (used only for Sell flow) -->
-    <div id="adModal" class="modal">
+      <div id="items-container"></div>
+    </div>
+
+    <!-- ==== Toast ==== -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ==== Feedback Modal ==== -->
+    <div id="feedbackModal" class="modal">
       <div class="modal-content">
-        <h2 id="modalTitle"></h2>
-        <p id="modalMessage"></p>
-        <div class="modal-buttons">
-          <button id="continueFreeBtn">Continue Free (wait 45 seconds)</button>
-          <button id="watchAdBtn">Watch Ad (instant)</button>
-        </div>
+        <h2>Feedback</h2>
+        <p>🔐 Login or sign up with GitHub to give the feedback.<br>
+        📺 Or click the video link <a href="https://archive.org/details/panfda" target="_blank">https://archive.org/details/panfda</a> to know how to give feedback.</p>
+        <p id="countdown">Redirecting in 5 seconds...</p>
       </div>
     </div>
+
+    <!-- ==== Fullscreen Overlay ==== -->
+    <div id="fullscreenOverlay" class="fullscreen-overlay">
+      <div class="overlay-content">
+        <button class="close-overlay" id="closeOverlayBtn">✖</button>
+        <iframe id="fullscreenIframe" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- ==== Floating Chat ==== -->
+    <div id="chatBubble">💬</div>
   </div>
 
+  <!-- ==== Footer (always at page bottom) ==== -->
+  <footer>© 2026 TradeNest· Built with ❤️ by YAN</footer>
+
   <script>
-    /* -------------------------------------------------------------
-       Global variables & utilities
-    ------------------------------------------------------------- */
-    const sellBtn = document.getElementById('sellBtn');
-    const buyBtn = document.getElementById('buyBtn');
-    const sellForm = document.getElementById('sellForm');
-    const itemsContainer = document.getElementById('items-container');
-    const disappearInput = document.getElementById('disappear_date');
-    const responseMsg = document.getElementById('responseMsg');
-    const archiveInput = document.getElementById('archive_url');
+    (function () {
+      const BASE_URL = 'https://buy_sell_metadata_backend.civilwan.workers.dev';
+      const SHARE_BASE = 'https://yan-1-related-1.github.io/yan-1-website-shared-links-redirecting/trade-nest-shared-links-redirecting.html?item_id=';
 
-    const adModal = document.getElementById('adModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const continueFreeBtn = document.getElementById('continueFreeBtn');
-    const watchAdBtn = document.getElementById('watchAdBtn');
+      // UI elements
+      const sellBtn = document.getElementById('sellBtn');
+      const buyBtn = document.getElementById('buyBtn');
+      const sellForm = document.getElementById('sellForm');
+      const buySection = document.getElementById('buySection');
+      const responseMsg = document.getElementById('responseMsg');
+      const itemsContainer = document.getElementById('items-container');
 
-    const BASE_URL = 'https://buy_sell_metadata_backend.civilwan.workers.dev';
+      const searchInput = document.getElementById('searchInput');
+      const searchMode = document.getElementById('searchMode');
+      const searchBtn = document.getElementById('searchBtn');
+      const backBtn = document.getElementById('backBtn');
+      const arrowSymbol = document.getElementById('arrowSymbol');
+      const idSelect = document.getElementById('idSelect');
 
-    // In‑memory cache (session‑based)
-    let cachedItems = null;
-    let pendingMetadata = null;
+      const toast = document.getElementById('toast');
+      const chatBubble = document.getElementById('chatBubble');
+      const feedbackModal = document.getElementById('feedbackModal');
+      const countdownEl = document.getElementById('countdown');
 
-    // Detect Android bridge (WebAppInterface)
-    const isAndroid = typeof Android !== 'undefined' && Android !== null
-                      && typeof Android.requestRewardedAd === 'function';
+      const disappearInput = document.getElementById('disappear_date');
 
-    if (isAndroid) {
-      // Pre‑load a rewarded ad as soon as the page is ready
-      Android.preloadRewardedAd();
-    }
+      // ---- Date range for disappear_date (today → +10 days) ----
+      const today = new Date();
+      const minDate = today.toISOString().split('T')[0];
+      const maxDt = new Date();
+      maxDt.setDate(maxDt.getDate() + 10);
+      const maxDate = maxDt.toISOString().split('T')[0];
+      disappearInput.min = minDate;
+      disappearInput.max = maxDate;
 
-    // -------- Date range for disappear_date (today → +10 days) --------
-    const today = new Date();
-    const minDate = today.toISOString().split('T')[0];
-    const maxDate = new Date(today.setDate(today.getDate() + 10)).toISOString().split('T')[0];
-    disappearInput.min = minDate;
-    disappearInput.max = maxDate;
+      let cachedItems = null; // in‑memory cache
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetItemId = urlParams.get('item_id'); // deep‑link id
 
-    /* -------------------------------------------------------------
-       Modal helpers for Sell flow
-    ------------------------------------------------------------- */
-    function showSellActionModal(metadata) {
-      pendingMetadata = metadata;
-      modalTitle.textContent = 'Continue your action';
-      modalMessage.innerHTML = 'You can continue for free after a short wait, or watch a short ad to continue instantly.<br><br>Watching ads is optional and helps keep this app free for everyone.';
+      /* ==============================================================
+         UI Navigation
+      ============================================================== */
+      sellBtn.onclick = () => {
+        sellForm.style.display = 'flex';
+        buySection.style.display = 'none';
+        responseMsg.textContent = '';
+      };
 
-      // Reset button states
-      continueFreeBtn.disabled = false;
-      watchAdBtn.disabled = false;
+      buyBtn.onclick = async () => {
+        sellForm.style.display = 'none';
+        buySection.style.display = 'block';
+        responseMsg.textContent = '';
 
-      // Show modal
-      adModal.classList.add('active');
+        if (cachedItems) {
+          displayItems(cachedItems);
+          populateIdSelect(cachedItems);
+          focusTargetId();
+          return;
+        }
 
-      // Continue‑Free (45‑second wait)
-      continueFreeBtn.onclick = () => {
-        continueFreeBtn.disabled = true;
-        watchAdBtn.disabled = true;
-        let remaining = 45;
-        modalMessage.textContent = `Please wait ${remaining} seconds...`;
+        itemsContainer.innerHTML = '<p>Loading items…</p>';
+        try {
+          const res = await fetch(`${BASE_URL}/api/items`);
+          if (!res.ok) throw new Error('Network error');
+          const data = await res.json();
+          cachedItems = data;
+          displayItems(data);
+          populateIdSelect(data);
+          focusTargetId();
+        } catch (e) {
+          console.error(e);
+          itemsContainer.innerHTML = '<p style="color:red;">Error loading items.</p>';
+        }
+      };
 
-        const intervalId = setInterval(() => {
-          remaining--;
-          if (remaining > 0) {
-            modalMessage.textContent = `Please wait ${remaining} seconds...`;
+      backBtn.onclick = () => {
+        // hide the buy section entirely – back to the start screen
+        buySection.style.display = 'none';
+        itemsContainer.innerHTML = '';
+      };
+
+      /* ==============================================================
+         Sell Form
+      ============================================================== */
+      sellForm.onsubmit = (e) => {
+        e.preventDefault();
+        responseMsg.textContent = '';
+
+        const archiveURL = document.getElementById('archive_url').value.trim();
+        if (!archiveURL.startsWith('https://archive.org/') && !archiveURL.startsWith('http://archive.org/')) {
+          responseMsg.textContent = '❌ Please enter a valid archive.org URL.';
+          responseMsg.className = 'error';
+          return;
+        }
+
+        const metadata = {
+          archive_url: archiveURL,
+          item: document.getElementById('item').value,
+          details: document.getElementById('details').value,
+          discount: document.getElementById('discount').value,
+          price: document.getElementById('price').value,
+          address: document.getElementById('address').value,
+          phone_number_1: document.getElementById('phone_number_1').value,
+          phone_number_2: document.getElementById('phone_number_2').value,
+          url: document.getElementById('url').value,
+          disappear_date: document.getElementById('disappear_date').value,
+          post: document.getElementById('post').value
+        };
+
+        fetch(`${BASE_URL}/api/sell`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(metadata)
+        })
+          .then(r => {
+            if (r.ok) {
+              responseMsg.textContent = '✅ Post submitted successfully!';
+              responseMsg.className = 'success';
+              sellForm.reset();
+              cachedItems = null; // force refresh next buy
+            } else {
+              responseMsg.textContent = '❌ Failed to submit post.';
+              responseMsg.className = 'error';
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            responseMsg.textContent = '⚠️ Error connecting to backend.';
+            responseMsg.className = 'error';
+          });
+      };
+
+      /* ==============================================================
+         Search Behaviour
+      ============================================================== */
+      searchBtn.onclick = () => {
+        const query = searchInput.value.trim();
+        if (!query) {
+          displayItems(cachedItems);
+          return;
+        }
+        const mode = searchMode.value;
+        searchItems(query, mode);
+      };
+
+      // Press Enter inside search box
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          searchBtn.click();
+        }
+      });
+
+      // Arrow toggles the ID dropdown
+      arrowSymbol.onclick = () => {
+        idSelect.style.display = idSelect.style.display === 'block' ? 'none' : 'block';
+      };
+
+      // Choose an ID from the dropdown
+      idSelect.onchange = () => {
+        const chosenId = idSelect.value;
+        idSelect.style.display = 'none';
+        searchMode.value = 'id';
+        searchInput.value = chosenId;
+        searchItems(chosenId, 'id');
+      };
+
+      function searchItems(query, mode) {
+        if (!cachedItems) return;
+        let results;
+        if (mode === 'name') {
+          results = cachedItems.filter(it => it.item && it.item.toLowerCase().includes(query.toLowerCase()));
+        } else {
+          results = cachedItems.filter(it => String(it.id) === query);
+        }
+        displayItems(results);
+      }
+
+      /* ==============================================================
+         Populate ID dropdown
+      ============================================================== */
+      function populateIdSelect(items) {
+        idSelect.innerHTML = '<option value="" disabled selected>Select ID</option>';
+        items.forEach(it => {
+          const opt = document.createElement('option');
+          opt.value = it.id;
+          opt.textContent = it.id;
+          idSelect.appendChild(opt);
+        });
+      }
+
+      /* ==============================================================
+         Render Items (random order)
+      ============================================================== */
+      function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function displayItems(list) {
+        itemsContainer.innerHTML = '';
+        if (!list || list.length === 0) {
+          itemsContainer.innerHTML = '<p>No items found.</p>';
+          return;
+        }
+
+        const shuffled = shuffleArray(list);
+        shuffled.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'item-card';
+          card.dataset.id = item.id;
+
+          // Media (image/audio/video/pdf or generic embed)
+          const media = createMediaElement(item.archive_url);
+          card.appendChild(media);
+
+          // ID
+          const idP = document.createElement('p');
+          idP.innerHTML = `<strong>ID:</strong> ${item.id}`;
+          card.appendChild(idP);
+
+          // Title
+          const title = document.createElement('h3');
+          title.textContent = item.item;
+          card.appendChild(title);
+
+          // Other fields
+          const fields = [
+            { label: 'Details', value: item.details },
+            { label: 'Price', value: `₹${item.price}` },
+            { label: 'Discount', value: `${item.discount}%` },
+            { label: 'Address', value: item.address },
+            { label: 'Phone 1', value: item.phone_number_1 },
+            { label: 'Phone 2', value: item.phone_number_2 || 'N/A' },
+            {
+              label: 'URL',
+              value: `<a href="${item.url}" class="external-link" target="_blank">${item.url}</a>`
+            },
+            { label: 'Disappear Date', value: item.disappear_date },
+            { label: 'Post', value: item.post }
+          ];
+
+          fields.forEach(f => {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${f.label}:</strong> ${f.value}`;
+            card.appendChild(p);
+          });
+
+          // Share button
+          const shareBtn = document.createElement('button');
+          shareBtn.className = 'share-btn';
+          shareBtn.textContent = '🔗 Share';
+          shareBtn.onclick = () => {
+            const shareLink = SHARE_BASE + encodeURIComponent(item.id);
+            if (navigator.share) {
+              navigator.share({
+                title: item.item,
+                text: 'Check out this item on TradeNest',
+                url: shareLink
+              }).catch(() => copyToClipboard(shareLink));
+            } else {
+              copyToClipboard(shareLink);
+            }
+          };
+          card.appendChild(shareBtn);
+
+          itemsContainer.appendChild(card);
+        });
+      }
+
+      /* ==============================================================
+         Media Helper (includes custom fullscreen overlay)
+      ============================================================== */
+      function createMediaElement(url) {
+        const ext = url.split('.').pop().split(/[?#]/)[0].toLowerCase();
+        const wrapper = document.createElement('div');
+        wrapper.className = 'media-wrapper';
+        let element;
+
+        if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
+          element = document.createElement('img');
+          element.src = url;
+          element.alt = 'Image';
+        } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
+          element = document.createElement('video');
+          element.src = url;
+          element.controls = true;
+        } else if (['mp3', 'wav', 'ogg'].includes(ext)) {
+          element = document.createElement('audio');
+          element.src = url;
+          element.controls = true;
+        } else if (['pdf'].includes(ext)) {
+          element = document.createElement('iframe');
+          element.src = url;
+        } else {
+          // Fallback to archive.org embed page
+          const embed = getEmbedUrl(url);
+          element = document.createElement('iframe');
+          element.src = embed;
+          element.allowFullscreen = true;
+        }
+
+        element.style.width = '100%';
+        element.style.border = 'none';
+        wrapper.appendChild(element);
+
+        // Custom fullscreen button
+        const fsBtn = document.createElement('button');
+        fsBtn.className = 'fullscreen-btn';
+        fsBtn.textContent = 'Fullscreen';
+        fsBtn.onclick = () => openFullscreenOverlay(url);
+        wrapper.appendChild(fsBtn);
+
+        return wrapper;
+      }
+
+      function getEmbedUrl(url) {
+        try {
+          const u = new URL(url);
+          if (u.pathname.includes('/details/')) {
+            u.pathname = u.pathname.replace('/details/', '/embed/');
+            return u.toString();
+          }
+          return url;
+        } catch {
+          return url;
+        }
+      }
+
+      /* ==============================================================
+         Fullscreen Overlay (custom)
+      ============================================================== */
+      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+      const fullscreenIframe = document.getElementById('fullscreenIframe');
+      const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+
+      function openFullscreenOverlay(url) {
+        fullscreenIframe.src = getEmbedUrl(url);
+        fullscreenOverlay.classList.add('active');
+      }
+
+      closeOverlayBtn.onclick = () => {
+        fullscreenIframe.src = '';
+        fullscreenOverlay.classList.remove('active');
+      };
+
+      /* ==============================================================
+         Toast Helper
+      ============================================================== */
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Share link copied!');
+        }).catch(() => alert('Unable to copy link'));
+      }
+
+      /* ==============================================================
+         Feedback Modal & Chat Bubble
+      ============================================================== */
+      chatBubble.onclick = () => {
+        feedbackModal.classList.add('active');
+        let secs = 5;
+        countdownEl.textContent = `Redirecting in ${secs} seconds...`;
+        const intId = setInterval(() => {
+          secs--;
+          if (secs > 0) {
+            countdownEl.textContent = `Redirecting in ${secs} seconds...`;
           } else {
-            clearInterval(intervalId);
-            modalMessage.textContent = 'Submitting...';
-            setTimeout(() => {
-              adModal.classList.remove('active');
-              submitMetadata(pendingMetadata);
-            }, 500);
+            clearInterval(intId);
+            feedbackModal.classList.remove('active');
+            window.open('https://github.com/OpenThoughtVoice/OpenThoughtVoice/discussions/7', '_blank');
           }
         }, 1000);
       };
 
-      // Watch Ad (instant)
-      watchAdBtn.onclick = () => {
-        adModal.classList.remove('active');
-        if (isAndroid) {
-          Android.requestRewardedAd(JSON.stringify(metadata));
-        } else {
-          submitMetadata(metadata);
+      feedbackModal.addEventListener('click', (e) => {
+        if (e.target === feedbackModal) {
+          feedbackModal.classList.remove('active');
         }
-      };
-    }
-
-    /* -------------------------------------------------------------
-       Backend communication
-    ------------------------------------------------------------- */
-    function submitMetadata(metadata) {
-      fetch(`${BASE_URL}/api/sell`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metadata)
-      })
-      .then(res => {
-        if (res.ok) {
-          responseMsg.textContent = '✅ Post submitted successfully!';
-          responseMsg.className = 'success';
-          sellForm.reset();
-          cachedItems = null; // Force refresh on next Buy
-        } else {
-          responseMsg.textContent = '❌ Failed to submit post.';
-          responseMsg.className = 'error';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        responseMsg.textContent = '⚠️ Error connecting to backend.';
-        responseMsg.className = 'error';
       });
-    }
 
-    /* -------------------------------------------------------------
-       Android bridge callbacks
-    ------------------------------------------------------------- */
-    function onAdCompleted(param) {
-      if (!param) return;
-
-      // Try to interpret param as JSON – if it works we treat it as
-      // sell‑metadata, otherwise as a URL.
-      try {
-        const data = JSON.parse(param);
-        submitMetadata(data);
-      } catch (e) {
-        const url = param;
-        if (isAndroid && typeof Android.loadUrlInWebView === 'function') {
-          Android.loadUrlInWebView(url);
-        } else {
-          window.open(url, '_blank');
+      /* ==============================================================
+         Deep‑link handling (focus on id)
+      ============================================================== */
+      function focusTargetId() {
+        if (!targetItemId) return;
+        const targetCard = document.querySelector(`.item-card[data-id="${targetItemId}"]`);
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetCard.classList.add('highlight');
+          setTimeout(() => targetCard.classList.remove('highlight'), 3000);
         }
       }
-    }
-    function onAdPreloaded() { console.log('✅ Rewarded ad preloaded'); }
-    function onAdFailedToPreload() { console.warn('⚠️ Failed to preload rewarded ad'); }
-    function onAdNotAvailable() { console.warn('⚠️ No rewarded ad available'); }
 
-    /* -------------------------------------------------------------
-       UI interaction
-    ------------------------------------------------------------- */
-    // Show Sell form
-    sellBtn.onclick = () => {
-      sellForm.style.display = 'flex';
-      itemsContainer.style.display = 'none';
-      responseMsg.textContent = '';
-    };
-
-    // Show Buy items
-    buyBtn.onclick = async () => {
-      sellForm.style.display = 'none';
-      itemsContainer.style.display = 'block';
-      responseMsg.textContent = '';
-
-      // Use cached data when possible
-      if (cachedItems) {
-        console.log('📦 Using cached items');
-        displayItems(cachedItems);
-        return;
-      }
-
-      itemsContainer.innerHTML = '<p>Loading items...</p>';
-
-      try {
-        const res = await fetch(`${BASE_URL}/api/items`);
-        const data = await res.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          itemsContainer.innerHTML = '<p>No items available.</p>';
-          return;
-        }
-
-        cachedItems = data;
-        displayItems(data);
-      } catch (err) {
-        console.error(err);
-        itemsContainer.innerHTML = '<p style="color:red;">Error loading items.</p>';
-      }
-    };
-
-    // Render items
-    function displayItems(data) {
-      itemsContainer.innerHTML = data.map(item => `
-        <div class="item-card">
-          <iframe src="${item.archive_url}" title="${item.item}" loading="lazy"></iframe>
-          <h3>${item.item}</h3>
-          <p><strong>Details:</strong> ${item.details}</p>
-          <p><strong>Price:</strong> ₹${item.price}</p>
-          <p><strong>Discount:</strong> ${item.discount}%</p>
-          <p><strong>Address:</strong> ${item.address}</p>
-          <p><strong>Phone 1:</strong> ${item.phone_number_1}</p>
-          <p><strong>Phone 2:</strong> ${item.phone_number_2 || 'N/A'}</p>
-          <p><strong>URL:</strong> <a href="${item.url}" class="external-link">${item.url}</a></p>
-          <p><strong>Disappear Date:</strong> ${item.disappear_date}</p>
-          <p><strong>Post:</strong> ${item.post}</p>
-        </div>
-      `).join('');
-    }
-
-    // Intercept link clicks inside the items container – open directly
-    itemsContainer.addEventListener('click', function (e) {
-      const tgt = e.target;
-      if (tgt.tagName.toLowerCase() === 'a' && tgt.classList.contains('external-link')) {
-        e.preventDefault();
-        const url = tgt.getAttribute('href');
-        window.open(url, '_blank');
-      }
-    });
-
-    // Handle Sell form submission (show modal first)
-    sellForm.onsubmit = (e) => {
-      e.preventDefault();
-      responseMsg.textContent = '';
-
-      // ---- Archive URL validation ----
-      const archiveURL = archiveInput.value.trim();
-      if (!archiveURL.startsWith('https://archive.org/') && !archiveURL.startsWith('http://archive.org/')) {
-        responseMsg.textContent = '❌ Please enter a valid archive.org URL.';
-        responseMsg.className = 'error';
-        return;
-      }
-
-      // ---- Gather metadata ----
-      const metadata = {
-        archive_url: archiveURL,
-        item: document.getElementById('item').value,
-        details: document.getElementById('details').value,
-        discount: document.getElementById('discount').value,
-        price: document.getElementById('price').value,
-        address: document.getElementById('address').value,
-        phone_number_1: document.getElementById('phone_number_1').value,
-        phone_number_2: document.getElementById('phone_number_2').value,
-        url: document.getElementById('url').value,
-        disappear_date: document.getElementById('disappear_date').value,
-        post: document.getElementById('post').value
-      };
-
-      // Show the Sell action modal
-      showSellActionModal(metadata);
-    };
+      // Initial view – nothing shown; user decides.
+    })();
   </script>
 </body>
 </html>
