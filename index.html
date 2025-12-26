@@ -1,219 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
   <title>TradeNest</title>
-  <style>
-    /* ==== Variables ==== */
-    :root {
-      --primary: #007bff;
-      --primary-dark: #0056b3;
-      --white: #fff;
-      --gray-light: #fafafa;
-      --gray-border: #e0e0e0;
-      --success: #28a745;
-      --error: #dc3545;
-    }
 
-    /* ==== Base ==== */
+  <style>
+    /* ------------------- Base ------------------- */
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff;               /* background colour removed */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff;                     /* removed the previous #f4f6f8 background */
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      align-items: center;
       min-height: 100vh;
     }
-    .container {
-      background: var(--white);
-      width: 95%;
-      max-width: 800px;
-      margin-top: 30px;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
+
     h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: #222;
+    }
+
+    .header {
       text-align: center;
-      margin: 0 0 15px;
-      font-size: 28px;
+      padding: 20px 10px;
+    }
+
+    .tagline {
+      margin: 10px 0 5px;
+      font-size: 1rem;
+      background: linear-gradient(45deg,#ff6a00,#ffd600);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      font-weight: 600;
+    }
+
+    .highlight {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #0069d9;
+    }
+
+    /* ------------------- Buttons ------------------- */
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 9px 22px;
+      border: none;
+      border-radius: 6px;
+      background: #007bff;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .3s;
+    }
+
+    button:hover { background:#0056b3; }
+
+    /* ------------------- Search ------------------- */
+    .search-container {
+      display: none;                     /* shown only on “Buy” */
+      width: 100%;
+      max-width: 800px;
+      padding: 0 15px;
+      margin-bottom: 10px;
+      gap: 8px;
+      align-items: center;
+      display: flex;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .search-container button {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+
+    /* ------------------- Sell Form ------------------- */
+    #sellForm {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 660px;
+      padding: 0 15px;
+    }
+
+    #sellForm label {
+      font-weight: 600;
       color: #333;
     }
-    h1 .site-symbol {
-      font-size: 0.8em;
-      margin-left: 5px;
-    }
-    .tagline {
-      text-align: center;
-      font-size: 18px;
-      background: linear-gradient(45deg,#ff416c,#ff4b2b,#0f2027,#203a43);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shine 3s ease-in-out infinite;
-      margin-bottom: 10px;
-    }
-    @keyframes shine{
-      0%,100%{filter:brightness(1);}
-      50%{filter:brightness(1.3);}
-    }
-    .subtagline{
-      text-align:center;
-      font-size:16px;
-      color:#555;
-      margin-bottom:25px;
+
+    #sellForm input,
+    #sellForm textarea {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-size: 0.95rem;
     }
 
-    /* ==== Buttons ==== */
-    .button-group{
-      display:flex;
-      justify-content:center;
-      gap:15px;
-      margin-bottom:20px;
-      flex-wrap:wrap;
-    }
-    button{
-      padding:10px 25px;
-      border:none;
-      border-radius:6px;
-      background:var(--primary);
-      color:var(--white);
-      font-size:16px;
-      cursor:pointer;
-      transition:background .3s;
-    }
-    button:hover{
-      background:var(--primary-dark);
+    #sellForm textarea { resize: vertical; }
+
+    #responseMsg { text-align:center; margin-top:8px; font-weight:600; }
+    .success { color:green; }
+    .error   { color:red; }
+
+    /* ------------------- Items Grid ------------------- */
+    #items-container {
+      display: none;
+      width: 100%;
+      max-width: 1300px;
+      padding: 0 15px;
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: 20px;
     }
 
-    /* ==== Forms ==== */
-    form{
-      display:none;
-      flex-direction:column;
-      gap:15px;
-    }
-    label{
-      font-weight:bold;
-      color:#333;
-    }
-    input,textarea,select{
-      padding:10px;
-      border-radius:6px;
-      border:1px solid #ccc;
-      font-size:15px;
-      width:100%;
-      box-sizing:border-box;
-    }
-    textarea{ resize:vertical; }
-
-    /* ==== Buy Section ==== */
-    #buySection{ display:none; }
-    .search-bar{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:20px;
-    }
-    .arrow-symbol{
-      cursor:pointer;
-      user-select:none;
-      font-weight:bold;
-    }
-    #idSelect{
-      display:none;
-      padding:5px;
-    }
-
-    /* ==== Items Grid ==== */
-    #items-container{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
-      gap:20px;
-    }
-    .item-card{
-      background:var(--gray-light);
-      border:1px solid var(--gray-border);
+    .item-card {
+      background:#fff;
+      border:1px solid #e0e0e0;
       border-radius:10px;
       padding:15px;
       box-shadow:0 2px 8px rgba(0,0,0,.05);
       position:relative;
     }
-    .item-card h3{
-      margin:10px 0 5px;
-      font-size:18px;
-      color:#222;
-    }
+
+    .item-card h3 { margin:0 0 8px; font-size:1.1rem; color:#222; }
     .item-card p{
       margin:4px 0;
-      font-size:14px;
+      font-size:0.88rem;
       color:#555;
     }
+
     .item-card a.external-link{
       color:#0069d9;
       text-decoration:underline;
     }
+
     .media-wrapper{
-      width:100%;
+      margin-bottom:10px;
       overflow:hidden;
-      border-radius:6px;
-    }
-    .media-wrapper img,
-    .media-wrapper video,
-    .media-wrapper audio,
-    .media-wrapper iframe{
-      width:100%;
-      display:block;
-    }
-    .fullscreen-btn,
-    .share-btn{
-      margin-top:5px;
-      padding:5px 10px;
-      font-size:13px;
-      border:none;
-      border-radius:4px;
-      cursor:pointer;
-    }
-    .fullscreen-btn{ background:#555; color:var(--white); }
-    .share-btn{ background:#28a745; color:var(--white); }
-
-    .highlight{
-      outline:3px solid #ff9800;
-      animation:pulse 1.5s infinite;
-    }
-    @keyframes pulse{
-      0%{outline-color:#ff9800;}
-      50%{outline-color:#ffcc80;}
-      100%{outline-color:#ff9800;}
     }
 
-    /* ==== Messages ==== */
-    .success,.error{
-      text-align:center;
-      font-weight:bold;
+    .card-actions{
       margin-top:10px;
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
     }
-    .success{color:var(--success);}
-    .error{color:var(--error);}
 
-    /* ==== Toast ==== */
-    .toast{
+    .card-actions button{
+      font-size:0.85rem;
+      padding:5px 10px;
+    }
+
+    /* ------------------- Footer ------------------- */
+    .footer{
+      margin-top:auto;
+      padding:12px 0;
+      width:100%;
+      text-align:center;
+      font-size:0.85rem;
+      color:#777;
+    }
+
+    /* ------------------- Floating Chat ------------------- */
+    .chat-button{
       position:fixed;
-      left:50%;
-      bottom:90px;
-      transform:translateX(-50%);
-      background:rgba(0,0,0,.8);
-      color:var(--white);
-      padding:10px 20px;
-      border-radius:6px;
-      opacity:0;
-      transition:opacity .3s;
+      right:20px;
+      bottom:80px;
+      width:60px;
+      height:60px;
+      background:#007bff;
+      color:#fff;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2rem;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
       z-index:2000;
     }
 
-    /* ==== Modal (Feedback) ==== */
+    /* ------------------- Feedback Modal ------------------- */
     .modal{
       position:fixed;
       inset:0;
@@ -221,597 +209,505 @@
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:3000;
+      z-index:2100;
     }
-    .modal.active{display:flex;}
-    .modal .modal-content{
-      background:var(--white);
+    .modal.active{ display:flex; }
+
+    .modal-content{
+      background:#fff;
       padding:20px 30px;
       border-radius:10px;
       max-width:90%;
       text-align:center;
       box-shadow:0 4px 12px rgba(0,0,0,.2);
     }
-    .modal .modal-content h2{margin-top:0;}
-    .modal .modal-content p{margin:15px 0;}
 
-    /* ==== Fullscreen Overlay ==== */
-    .fullscreen-overlay{
+    .modal-content p{ margin:8px 0; font-size:0.95rem; }
+    .modal-content a{ color:#0069d9; }
+
+    /* ------------------- Full‑Screen Embed Modal ------------------- */
+    .fullscreen-modal{
       position:fixed;
       inset:0;
       background:rgba(0,0,0,.9);
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:5000;
+      z-index:3000;
     }
-    .fullscreen-overlay.active{display:flex;}
-    .overlay-content{
+    .fullscreen-modal.active{ display:flex; }
+
+    .fullscreen-content{
       position:relative;
-      width:90%;
-      height:90%;
+      width:95%;
+      height:95%;
+      background:#000;
     }
-    .overlay-content iframe{
+
+    .fullscreen-content button{
+      position:absolute;
+      top:10px;
+      right:10px;
+      background:rgba(255,255,255,.2);
+      border:none;
+      color:#fff;
+      font-size:1.5rem;
+      cursor:pointer;
+      border-radius:4px;
+    }
+
+    .fullscreen-content iframe{
       width:100%;
       height:100%;
       border:none;
     }
-    .close-overlay{
-      position:absolute;
-      top:8px;
-      right:8px;
-      background:rgba(255,255,255,.8);
-      border:none;
-      border-radius:4px;
-      padding:5px 8px;
-      cursor:pointer;
-      font-size:16px;
-    }
 
-    /* ==== Floating Chat ==== */
-    #chatBubble{
-      position:fixed;
-      right:20px;
-      bottom:110px;
-      font-size:2rem;
-      cursor:pointer;
-      z-index:4000;
-    }
-
-    /* ==== Site Symbol ==== */
-    #siteSymbol{
-      position:fixed;
-      top:20px;
-      left:20px;
-      font-size:2rem;
-    }
-
-    /* ==== Footer (always bottom) ==== */
-    footer{
-      text-align:center;
-      font-size:14px;
-      color:#777;
-      margin-top:30px;
-    }
-
-    /* ==== Responsiveness ==== */
+    /* ------------------- Responsive ------------------- */
     @media (max-width:768px){
-      h1{font-size:24px;}
-      button{font-size:15px;padding:8px 20px;}
+      h1{font-size:1.9rem}
+      .tagline{font-size:0.9rem}
+      .highlight{font-size:0.85rem}
+      button{font-size:0.9rem;padding:7px 18px}
     }
     @media (max-width:480px){
-      .container{padding:20px;}
-      .tagline{font-size:16px;}
-      .subtagline{font-size:14px;}
+      h1{font-size:1.6rem}
+      .tagline{font-size:0.85rem}
+      .highlight{font-size:0.8rem}
     }
   </style>
 </head>
 <body>
 
-  <!-- Site-wide symbol -->
-  <div id="siteSymbol">⚡</div>
-
-  <div class="container">
-    <h1>TradeNest<span class="site-symbol">🛒</span></h1>
+  <!-- ---------- Header ---------- -->
+  <header class="header">
+    <h1>🛒 TradeNest</h1>
     <p class="tagline">“A trusted marketplace where buying and selling come together. Discover great deals, list items effortlessly, and connect with real people—fast, simple, and secure.”</p>
-    <p class="subtagline">“Buy smarter. Sell faster. Connect instantly.”</p>
+    <p class="highlight">“Buy smarter. Sell faster. Connect instantly.”</p>
+  </header>
 
-    <div class="button-group">
-      <button id="sellBtn">Sell</button>
-      <button id="buyBtn">Buy</button>
-    </div>
-
-    <!-- ==== SELL FORM ==== -->
-    <form id="sellForm">
-      <label>Archive URL (only from archive.org)</label>
-      <input type="url" id="archive_url" placeholder="https://archive.org/details/..." required>
-
-      <label>Item</label>
-      <input type="text" id="item" required>
-
-      <label>Details</label>
-      <textarea id="details" rows="3" required></textarea>
-
-      <label>Discount (%)</label>
-      <input type="number" id="discount" min="0" max="100" required>
-
-      <label>Price (₹)</label>
-      <input type="number" id="price" min="0" required>
-
-      <label>Address</label>
-      <input type="text" id="address" required>
-
-      <label>Phone Number 1</label>
-      <input type="tel" id="phone_number_1" required>
-
-      <label>Phone Number 2</label>
-      <input type="tel" id="phone_number_2">
-
-      <label>URL</label>
-      <input type="url" id="url" required>
-
-      <label>Disappear Date</label>
-      <input type="date" id="disappear_date" required>
-
-      <label>Post</label>
-      <textarea id="post" rows="2" placeholder="Enter post text..." required></textarea>
-
-      <button type="submit">Submit Post</button>
-
-      <div id="responseMsg"></div>
-    </form>
-
-    <!-- ==== BUY SECTION ==== -->
-    <div id="buySection">
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search by item name...">
-        <select id="searchMode">
-          <option value="name">Search by Name</option>
-          <option value="id">Search by ID</option>
-        </select>
-        <button id="searchBtn">Search</button>
-        <button id="backBtn">Back</button>
-        <span id="arrowSymbol" class="arrow-symbol">&#8594;</span>
-        <select id="idSelect"></select>
-      </div>
-
-      <div id="items-container"></div>
-    </div>
-
-    <!-- ==== Toast ==== -->
-    <div id="toast" class="toast"></div>
-
-    <!-- ==== Feedback Modal ==== -->
-    <div id="feedbackModal" class="modal">
-      <div class="modal-content">
-        <h2>Feedback</h2>
-        <p>🔐 Login or sign up with GitHub to give the feedback.<br>
-        📺 Or click the video link <a href="https://archive.org/details/panfda" target="_blank">https://archive.org/details/panfda</a> to know how to give feedback.</p>
-        <p id="countdown">Redirecting in 5 seconds...</p>
-      </div>
-    </div>
-
-    <!-- ==== Fullscreen Overlay ==== -->
-    <div id="fullscreenOverlay" class="fullscreen-overlay">
-      <div class="overlay-content">
-        <button class="close-overlay" id="closeOverlayBtn">✖</button>
-        <iframe id="fullscreenIframe" allowfullscreen></iframe>
-      </div>
-    </div>
-
-    <!-- ==== Floating Chat ==== -->
-    <div id="chatBubble">💬</div>
+  <!-- ---------- Main Buttons ---------- -->
+  <div class="button-group">
+    <button id="sellBtn">Sell</button>
+    <button id="buyBtn">Buy</button>
   </div>
 
-  <!-- ==== Footer (always at page bottom) ==== -->
-  <footer>© 2026 TradeNest· Built with ❤️ by YAN</footer>
+  <!-- ---------- Search (Buy) ---------- -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search by item name...">
+    <button id="toggleSearchMode">→</button>
+    <button id="searchBtn">Search</button>
+    <button id="backBtn">← Back</button>
+  </div>
+
+  <!-- ---------- Sell Form ---------- -->
+  <form id="sellForm">
+    <label>Archive URL (only from archive.org)</label>
+    <input type="url" id="archive_url"
+           placeholder="https://archive.org/details/..."
+           required>
+
+    <label>Item</label>
+    <input type="text" id="item" required>
+
+    <label>Details</label>
+    <textarea id="details" rows="3" required></textarea>
+
+    <label>Discount (%)</label>
+    <input type="number" id="discount" min="0" max="100" required>
+
+    <label>Price (₹)</label>
+    <input type="number" id="price" min="0" required>
+
+    <label>Address</label>
+    <input type="text" id="address" required>
+
+    <label>Phone Number 1</label>
+    <input type="tel" id="phone_number_1" required>
+
+    <label>Phone Number 2</label>
+    <input type="tel" id="phone_number_2">
+
+    <label>URL</label>
+    <input type="url" id="url" required>
+
+    <label>Disappear Date</label>
+    <input type="date" id="disappear_date" required>
+
+    <label>Post</label>
+    <textarea id="post" rows="2" placeholder="Enter post text..."
+              required></textarea>
+
+    <button type="submit">Submit Post</button>
+
+    <div id="responseMsg"></div>
+  </form>
+
+  <!-- ---------- Items Grid (Buy) ---------- -->
+  <div id="items-container"></div>
+
+  <!-- ---------- Footer ---------- -->
+  <footer class="footer">
+    © 2026 TradeNest· Built with ❤️ by YAN
+  </footer>
+
+  <!-- ---------- Floating Chat ---------- -->
+  <div id="chatBtn" class="chat-button">💬</div>
+
+  <!-- ---------- Feedback Modal ---------- -->
+  <div id="feedbackModal" class="modal">
+    <div class="modal-content">
+      <p>🔐 Login or sign up with GitHub to give the feedback.</p>
+      <p>📺 Or click the video link
+        <a href="https://archive.org/details/panfda"
+           target="_blank">https://archive.org/details/panfda</a>
+        to know how to give feedback.</p>
+      <p id="countdown">5</p>
+    </div>
+  </div>
+
+  <!-- ---------- Full‑Screen Embed Modal ---------- -->
+  <div id="fullscreenModal" class="fullscreen-modal">
+    <div class="fullscreen-content">
+      <button id="closeFullscreenBtn">✖</button>
+      <iframe id="fullscreenIframe" allowfullscreen></iframe>
+    </div>
+  </div>
 
   <script>
-    (function () {
-      const BASE_URL = 'https://buy_sell_metadata_backend.civilwan.workers.dev';
-      const SHARE_BASE = 'https://yan-1-related-1.github.io/yan-1-website-shared-links-redirecting/trade-nest-shared-links-redirecting.html?item_id=';
+    /* ==========================================================
+       Global constants & state
+      ========================================================== */
+    const BASE_URL = 'https://buy_sell_metadata_backend.civilwan.workers.dev';
+    let cachedItems = null;               // holds items (shuffled)
+    let searchMode = 'name';               // 'name' or 'id'
 
-      // UI elements
-      const sellBtn = document.getElementById('sellBtn');
-      const buyBtn = document.getElementById('buyBtn');
-      const sellForm = document.getElementById('sellForm');
-      const buySection = document.getElementById('buySection');
-      const responseMsg = document.getElementById('responseMsg');
-      const itemsContainer = document.getElementById('items-container');
+    /* ==========================================================
+       DOM references
+      ========================================================== */
+    const sellBtn          = document.getElementById('sellBtn');
+    const buyBtn           = document.getElementById('buyBtn');
+    const sellForm         = document.getElementById('sellForm');
+    const itemsContainer   = document.getElementById('items-container');
+    const searchContainer  = document.querySelector('.search-container');
+    const searchInput      = document.getElementById('searchInput');
+    const toggleSearchMode = document.getElementById('toggleSearchMode');
+    const searchBtn        = document.getElementById('searchBtn');
+    const backBtn          = document.getElementById('backBtn');
+    const responseMsg      = document.getElementById('responseMsg');
+    const archiveInput     = document.getElementById('archive_url');
 
-      const searchInput = document.getElementById('searchInput');
-      const searchMode = document.getElementById('searchMode');
-      const searchBtn = document.getElementById('searchBtn');
-      const backBtn = document.getElementById('backBtn');
-      const arrowSymbol = document.getElementById('arrowSymbol');
-      const idSelect = document.getElementById('idSelect');
+    const chatBtn          = document.getElementById('chatBtn');
+    const feedbackModal    = document.getElementById('feedbackModal');
+    const countdownEl      = document.getElementById('countdown');
 
-      const toast = document.getElementById('toast');
-      const chatBubble = document.getElementById('chatBubble');
-      const feedbackModal = document.getElementById('feedbackModal');
-      const countdownEl = document.getElementById('countdown');
+    const fullscreenModal  = document.getElementById('fullscreenModal');
+    const fullscreenIframe = document.getElementById('fullscreenIframe');
+    const closeFullscreenBtn = document.getElementById('closeFullscreenBtn');
 
-      const disappearInput = document.getElementById('disappear_date');
+    /* ==========================================================
+       Utility functions
+      ========================================================== */
+    const esc = txt => (txt ?? '').toString()
+                .replace(/&/g,'&amp;')
+                .replace(/"/g,'&quot;')
+                .replace(/'/g,'&#039;')
+                .replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;');
 
-      // ---- Date range for disappear_date (today → +10 days) ----
-      const today = new Date();
-      const minDate = today.toISOString().split('T')[0];
-      const maxDt = new Date();
-      maxDt.setDate(maxDt.getDate() + 10);
-      const maxDate = maxDt.toISOString().split('T')[0];
-      disappearInput.min = minDate;
-      disappearInput.max = maxDate;
+    function shuffleArray(arr){
+      return arr.slice().sort(() => Math.random() - 0.5);
+    }
 
-      let cachedItems = null; // in‑memory cache
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetItemId = urlParams.get('item_id'); // deep‑link id
+    // Build the proper embed URL for archive.org “details” pages
+    function getEmbedUrl(url){
+      if (!url) return '';
+      const match = url.match(/archive\.org\/details\/([^/?]+)/);
+      return match ? `https://archive.org/embed/${match[1]}` : url;
+    }
 
-      /* ==============================================================
-         UI Navigation
-      ============================================================== */
-      sellBtn.onclick = () => {
-        sellForm.style.display = 'flex';
-        buySection.style.display = 'none';
-        responseMsg.textContent = '';
-      };
-
-      buyBtn.onclick = async () => {
-        sellForm.style.display = 'none';
-        buySection.style.display = 'block';
-        responseMsg.textContent = '';
-
-        if (cachedItems) {
-          displayItems(cachedItems);
-          populateIdSelect(cachedItems);
-          focusTargetId();
-          return;
-        }
-
-        itemsContainer.innerHTML = '<p>Loading items…</p>';
-        try {
-          const res = await fetch(`${BASE_URL}/api/items`);
-          if (!res.ok) throw new Error('Network error');
-          const data = await res.json();
-          cachedItems = data;
-          displayItems(data);
-          populateIdSelect(data);
-          focusTargetId();
-        } catch (e) {
-          console.error(e);
-          itemsContainer.innerHTML = '<p style="color:red;">Error loading items.</p>';
-        }
-      };
-
-      backBtn.onclick = () => {
-        // hide the buy section entirely – back to the start screen
-        buySection.style.display = 'none';
-        itemsContainer.innerHTML = '';
-      };
-
-      /* ==============================================================
-         Sell Form
-      ============================================================== */
-      sellForm.onsubmit = (e) => {
-        e.preventDefault();
-        responseMsg.textContent = '';
-
-        const archiveURL = document.getElementById('archive_url').value.trim();
-        if (!archiveURL.startsWith('https://archive.org/') && !archiveURL.startsWith('http://archive.org/')) {
-          responseMsg.textContent = '❌ Please enter a valid archive.org URL.';
-          responseMsg.className = 'error';
-          return;
-        }
-
-        const metadata = {
-          archive_url: archiveURL,
-          item: document.getElementById('item').value,
-          details: document.getElementById('details').value,
-          discount: document.getElementById('discount').value,
-          price: document.getElementById('price').value,
-          address: document.getElementById('address').value,
-          phone_number_1: document.getElementById('phone_number_1').value,
-          phone_number_2: document.getElementById('phone_number_2').value,
-          url: document.getElementById('url').value,
-          disappear_date: document.getElementById('disappear_date').value,
-          post: document.getElementById('post').value
-        };
-
-        fetch(`${BASE_URL}/api/sell`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(metadata)
-        })
-          .then(r => {
-            if (r.ok) {
-              responseMsg.textContent = '✅ Post submitted successfully!';
-              responseMsg.className = 'success';
-              sellForm.reset();
-              cachedItems = null; // force refresh next buy
-            } else {
-              responseMsg.textContent = '❌ Failed to submit post.';
-              responseMsg.className = 'error';
-            }
-          })
-          .catch(err => {
-            console.error(err);
-            responseMsg.textContent = '⚠️ Error connecting to backend.';
-            responseMsg.className = 'error';
-          });
-      };
-
-      /* ==============================================================
-         Search Behaviour
-      ============================================================== */
-      searchBtn.onclick = () => {
-        const query = searchInput.value.trim();
-        if (!query) {
-          displayItems(cachedItems);
-          return;
-        }
-        const mode = searchMode.value;
-        searchItems(query, mode);
-      };
-
-      // Press Enter inside search box
-      searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          searchBtn.click();
-        }
-      });
-
-      // Arrow toggles the ID dropdown
-      arrowSymbol.onclick = () => {
-        idSelect.style.display = idSelect.style.display === 'block' ? 'none' : 'block';
-      };
-
-      // Choose an ID from the dropdown
-      idSelect.onchange = () => {
-        const chosenId = idSelect.value;
-        idSelect.style.display = 'none';
-        searchMode.value = 'id';
-        searchInput.value = chosenId;
-        searchItems(chosenId, 'id');
-      };
-
-      function searchItems(query, mode) {
-        if (!cachedItems) return;
-        let results;
-        if (mode === 'name') {
-          results = cachedItems.filter(it => it.item && it.item.toLowerCase().includes(query.toLowerCase()));
-        } else {
-          results = cachedItems.filter(it => String(it.id) === query);
-        }
-        displayItems(results);
+    // Build HTML for media preview inside the grid
+    function getMediaHtml(url){
+      if (!url) return '';
+      const escaped = esc(url);
+      const ext = url.split('.').pop().split('?')[0].toLowerCase();
+      const imgExt = ['png','jpg','jpeg','gif','webp'];
+      if (imgExt.includes(ext)) {
+        return `<img src="${escaped}" alt="image" loading="lazy"
+                style="max-width:100%;max-height:200px;border-radius:6px;">`;
       }
-
-      /* ==============================================================
-         Populate ID dropdown
-      ============================================================== */
-      function populateIdSelect(items) {
-        idSelect.innerHTML = '<option value="" disabled selected>Select ID</option>';
-        items.forEach(it => {
-          const opt = document.createElement('option');
-          opt.value = it.id;
-          opt.textContent = it.id;
-          idSelect.appendChild(opt);
-        });
+      if (ext === 'mp4') {
+        return `<video src="${escaped}" controls
+                style="width:100%;max-height:200px;border-radius:6px;"></video>`;
       }
-
-      /* ==============================================================
-         Render Items (random order)
-      ============================================================== */
-      function shuffleArray(arr) {
-        const a = arr.slice();
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
+      if (ext === 'mp3') {
+        return `<audio src="${escaped}" controls
+                style="width:100%;"></audio>`;
       }
-
-      function displayItems(list) {
-        itemsContainer.innerHTML = '';
-        if (!list || list.length === 0) {
-          itemsContainer.innerHTML = '<p>No items found.</p>';
-          return;
-        }
-
-        const shuffled = shuffleArray(list);
-        shuffled.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'item-card';
-          card.dataset.id = item.id;
-
-          // Media (image/audio/video/pdf or generic embed)
-          const media = createMediaElement(item.archive_url);
-          card.appendChild(media);
-
-          // ID
-          const idP = document.createElement('p');
-          idP.innerHTML = `<strong>ID:</strong> ${item.id}`;
-          card.appendChild(idP);
-
-          // Title
-          const title = document.createElement('h3');
-          title.textContent = item.item;
-          card.appendChild(title);
-
-          // Other fields
-          const fields = [
-            { label: 'Details', value: item.details },
-            { label: 'Price', value: `₹${item.price}` },
-            { label: 'Discount', value: `${item.discount}%` },
-            { label: 'Address', value: item.address },
-            { label: 'Phone 1', value: item.phone_number_1 },
-            { label: 'Phone 2', value: item.phone_number_2 || 'N/A' },
-            {
-              label: 'URL',
-              value: `<a href="${item.url}" class="external-link" target="_blank">${item.url}</a>`
-            },
-            { label: 'Disappear Date', value: item.disappear_date },
-            { label: 'Post', value: item.post }
-          ];
-
-          fields.forEach(f => {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>${f.label}:</strong> ${f.value}`;
-            card.appendChild(p);
-          });
-
-          // Share button
-          const shareBtn = document.createElement('button');
-          shareBtn.className = 'share-btn';
-          shareBtn.textContent = '🔗 Share';
-          shareBtn.onclick = () => {
-            const shareLink = SHARE_BASE + encodeURIComponent(item.id);
-            if (navigator.share) {
-              navigator.share({
-                title: item.item,
-                text: 'Check out this item on TradeNest',
-                url: shareLink
-              }).catch(() => copyToClipboard(shareLink));
-            } else {
-              copyToClipboard(shareLink);
-            }
-          };
-          card.appendChild(shareBtn);
-
-          itemsContainer.appendChild(card);
-        });
+      if (ext === 'pdf') {
+        return `<embed src="${escaped}" type="application/pdf"
+                style="width:100%;height:200px;"></embed>`;
       }
+      // archive.org details → embed
+      const match = url.match(/archive\.org\/details\/([^/?]+)/);
+      if (match) {
+        const embed = `https://archive.org/embed/${match[1]}`;
+        return `<iframe src="${embed}" loading="lazy"
+                style="width:100%;height:200px;border:none;"></iframe>`;
+      }
+      // fallback link
+      return `<a href="${escaped}" target="_blank">Open file</a>`;
+    }
 
-      /* ==============================================================
-         Media Helper (includes custom fullscreen overlay)
-      ============================================================== */
-      function createMediaElement(url) {
-        const ext = url.split('.').pop().split(/[?#]/)[0].toLowerCase();
-        const wrapper = document.createElement('div');
-        wrapper.className = 'media-wrapper';
-        let element;
+    // Render an array of items into the grid
+    function renderItems(items){
+      if (!Array.isArray(items) || items.length === 0) {
+        itemsContainer.innerHTML = '<p>No matching items found.</p>';
+        return;
+      }
+      itemsContainer.innerHTML = items.map(item => {
+        const id = esc(item.id ?? item._id ?? '');
+        const media = getMediaHtml(item.archive_url);
+        return `
+          <div class="item-card" id="item-${id}">
+            <div class="media-wrapper">${media}</div>
+            <h3>${esc(item.item)}</h3>
+            <p><strong>ID:</strong> ${id}</p>
+            <p><strong>Details:</strong> ${esc(item.details)}</p>
+            <p><strong>Price:</strong> ₹${esc(item.price)}</p>
+            <p><strong>Discount:</strong> ${esc(item.discount)}%</p>
+            <p><strong>Address:</strong> ${esc(item.address)}</p>
+            <p><strong>Phone 1:</strong> ${esc(item.phone_number_1)}</p>
+            ${item.phone_number_2 ? `<p><strong>Phone 2:</strong> ${esc(item.phone_number_2)}</p>` : ''}
+            <p><strong>URL:</strong> <a href="${esc(item.url)}"
+               target="_blank" class="external-link">${esc(item.url)}</a></p>
+            <p><strong>Disappear Date:</strong> ${esc(item.disappear_date)}</p>
+            <p><strong>Post:</strong> ${esc(item.post)}</p>
+            <div class="card-actions">
+              <button class="fullscreen-btn" data-url="${esc(item.archive_url)}">⛶</button>
+              <button class="share-btn" data-id="${id}">🔗 Share</button>
+            </div>
+          </div>`;
+      }).join('');
+      attachCardListeners();
+    }
 
-        if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
-          element = document.createElement('img');
-          element.src = url;
-          element.alt = 'Image';
-        } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
-          element = document.createElement('video');
-          element.src = url;
-          element.controls = true;
-        } else if (['mp3', 'wav', 'ogg'].includes(ext)) {
-          element = document.createElement('audio');
-          element.src = url;
-          element.controls = true;
-        } else if (['pdf'].includes(ext)) {
-          element = document.createElement('iframe');
-          element.src = url;
-        } else {
-          // Fallback to archive.org embed page
+    // Attach listeners for fullscreen and share buttons
+    function attachCardListeners(){
+      document.querySelectorAll('.fullscreen-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const url = btn.dataset.url;
           const embed = getEmbedUrl(url);
-          element = document.createElement('iframe');
-          element.src = embed;
-          element.allowFullscreen = true;
-        }
-
-        element.style.width = '100%';
-        element.style.border = 'none';
-        wrapper.appendChild(element);
-
-        // Custom fullscreen button
-        const fsBtn = document.createElement('button');
-        fsBtn.className = 'fullscreen-btn';
-        fsBtn.textContent = 'Fullscreen';
-        fsBtn.onclick = () => openFullscreenOverlay(url);
-        wrapper.appendChild(fsBtn);
-
-        return wrapper;
-      }
-
-      function getEmbedUrl(url) {
-        try {
-          const u = new URL(url);
-          if (u.pathname.includes('/details/')) {
-            u.pathname = u.pathname.replace('/details/', '/embed/');
-            return u.toString();
-          }
-          return url;
-        } catch {
-          return url;
-        }
-      }
-
-      /* ==============================================================
-         Fullscreen Overlay (custom)
-      ============================================================== */
-      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-      const fullscreenIframe = document.getElementById('fullscreenIframe');
-      const closeOverlayBtn = document.getElementById('closeOverlayBtn');
-
-      function openFullscreenOverlay(url) {
-        fullscreenIframe.src = getEmbedUrl(url);
-        fullscreenOverlay.classList.add('active');
-      }
-
-      closeOverlayBtn.onclick = () => {
-        fullscreenIframe.src = '';
-        fullscreenOverlay.classList.remove('active');
-      };
-
-      /* ==============================================================
-         Toast Helper
-      ============================================================== */
-      function showToast(msg) {
-        toast.textContent = msg;
-        toast.style.opacity = '1';
-        setTimeout(() => { toast.style.opacity = '0'; }, 2500);
-      }
-
-      function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-          showToast('Share link copied!');
-        }).catch(() => alert('Unable to copy link'));
-      }
-
-      /* ==============================================================
-         Feedback Modal & Chat Bubble
-      ============================================================== */
-      chatBubble.onclick = () => {
-        feedbackModal.classList.add('active');
-        let secs = 5;
-        countdownEl.textContent = `Redirecting in ${secs} seconds...`;
-        const intId = setInterval(() => {
-          secs--;
-          if (secs > 0) {
-            countdownEl.textContent = `Redirecting in ${secs} seconds...`;
-          } else {
-            clearInterval(intId);
-            feedbackModal.classList.remove('active');
-            window.open('https://github.com/OpenThoughtVoice/OpenThoughtVoice/discussions/7', '_blank');
-          }
-        }, 1000);
-      };
-
-      feedbackModal.addEventListener('click', (e) => {
-        if (e.target === feedbackModal) {
-          feedbackModal.classList.remove('active');
-        }
+          fullscreenIframe.src = embed;
+          fullscreenModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        });
       });
 
-      /* ==============================================================
-         Deep‑link handling (focus on id)
-      ============================================================== */
-      function focusTargetId() {
-        if (!targetItemId) return;
-        const targetCard = document.querySelector(`.item-card[data-id="${targetItemId}"]`);
-        if (targetCard) {
-          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          targetCard.classList.add('highlight');
-          setTimeout(() => targetCard.classList.remove('highlight'), 3000);
+      document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const shareLink = `https://yan-1-related-1.github.io/yan-1-website-shared-links-redirecting/trade-nest-shared-links-redirecting.html?item_id=${encodeURIComponent(id)}`;
+          if (navigator.share) {
+            navigator.share({
+              title: 'TradeNest Item',
+              text: 'Check out this item on TradeNest',
+              url: shareLink
+            }).catch(err => console.warn('Share failed', err));
+          } else {
+            navigator.clipboard.writeText(shareLink)
+              .then(() => alert('Link copied to clipboard!'))
+              .catch(() => prompt('Copy the link manually:', shareLink));
+          }
+        });
+      });
+    }
+
+    // Scroll to the item that matches the ID passed in the URL
+    function scrollToItemFromURL(){
+      const params = new URLSearchParams(window.location.search);
+      const focusId = params.get('item_id');
+      if (!focusId) return;
+      setTimeout(() => {
+        const el = document.getElementById(`item-${focusId}`);
+        if (el) {
+          el.scrollIntoView({behavior:'smooth', block:'center'});
+          el.style.boxShadow = '0 0 12px 4px rgba(0,123,255,.5)';
+          setTimeout(() => el.style.boxShadow = '', 3000);
         }
+      }, 500);
+    }
+
+    /* ==========================================================
+       UI Interaction
+      ========================================================== */
+    // SELL button – show form
+    sellBtn.onclick = () => {
+      sellForm.style.display = 'flex';
+      itemsContainer.style.display = 'none';
+      searchContainer.style.display = 'none';
+      responseMsg.textContent = '';
+    };
+
+    // BUY button – show items grid + search bar
+    buyBtn.onclick = () => {
+      sellForm.style.display = 'none';
+      itemsContainer.style.display = 'grid';
+      searchContainer.style.display = 'flex';
+      responseMsg.textContent = '';
+      if (cachedItems) {
+        renderItems(cachedItems);
+        scrollToItemFromURL();
+      } else {
+        fetchAndDisplayItems();
+      }
+    };
+
+    // Toggle between name‑search and ID‑search
+    toggleSearchMode.onclick = () => {
+      if (searchMode === 'name') {
+        searchMode = 'id';
+        searchInput.placeholder = 'Enter ID...';
+        toggleSearchMode.textContent = '←';
+      } else {
+        searchMode = 'name';
+        searchInput.placeholder = 'Search by item name...';
+        toggleSearchMode.textContent = '→';
+      }
+    };
+
+    // Execute a search
+    searchBtn.onclick = () => {
+      const term = searchInput.value.trim().toLowerCase();
+      if (!cachedItems) return;
+
+      if (searchMode === 'name') {
+        const filtered = cachedItems.filter(it => (it.item ?? '').toLowerCase().includes(term));
+        renderItems(filtered);
+      } else {
+        const filtered = cachedItems.filter(it => String(it.id ?? it._id ?? '') === term);
+        renderItems(filtered);
+      }
+    };
+
+    // BACK button – return to the full, un‑filtered list
+    backBtn.onclick = () => {
+      if (!cachedItems) return;
+      searchInput.value = '';
+      renderItems(cachedItems);
+    };
+
+    // Fetch items from the backend (shuffle them)
+    function fetchAndDisplayItems(){
+      itemsContainer.innerHTML = '<p>Loading items…</p>';
+      fetch(`${BASE_URL}/api/items`)
+        .then(r => r.json())
+        .then(data => {
+          cachedItems = shuffleArray(data);   // random order
+          renderItems(cachedItems);
+          scrollToItemFromURL();
+        })
+        .catch(() => {
+          itemsContainer.innerHTML = '<p style="color:red;">Error loading items.</p>';
+        });
+    }
+
+    // Full‑screen modal close button
+    closeFullscreenBtn.onclick = () => {
+      fullscreenModal.classList.remove('active');
+      fullscreenIframe.src = '';
+      document.body.style.overflow = '';
+    };
+
+    // Close fullscreen when clicking outside the content (optional)
+    fullscreenModal.addEventListener('click', e => {
+      if (e.target === fullscreenModal) {
+        closeFullscreenBtn.click();
+      }
+    });
+
+    /* ==========================================================
+       SELL Form submission (no ads)
+      ========================================================== */
+    sellForm.addEventListener('submit', e => {
+      e.preventDefault();
+      responseMsg.textContent = '';
+      const archiveURL = archiveInput.value.trim();
+      if (!archiveURL.startsWith('https://archive.org/') &&
+          !archiveURL.startsWith('http://archive.org/')) {
+        responseMsg.textContent = '❌ Please enter a valid archive.org URL.';
+        responseMsg.className = 'error';
+        return;
       }
 
-      // Initial view – nothing shown; user decides.
-    })();
+      const metadata = {
+        archive_url: archiveURL,
+        item: document.getElementById('item').value,
+        details: document.getElementById('details').value,
+        discount: document.getElementById('discount').value,
+        price: document.getElementById('price').value,
+        address: document.getElementById('address').value,
+        phone_number_1: document.getElementById('phone_number_1').value,
+        phone_number_2: document.getElementById('phone_number_2').value,
+        url: document.getElementById('url').value,
+        disappear_date: document.getElementById('disappear_date').value,
+        post: document.getElementById('post').value
+      };
+
+      fetch(`${BASE_URL}/api/sell`, {
+        method: 'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(metadata)
+      })
+      .then(r => {
+        if (r.ok) {
+          responseMsg.textContent = '✅ Post submitted successfully!';
+          responseMsg.className = 'success';
+          sellForm.reset();
+          cachedItems = null; // force fresh fetch on next Buy
+        } else {
+          responseMsg.textContent = '❌ Failed to submit post.';
+          responseMsg.className = 'error';
+        }
+      })
+      .catch(() => {
+        responseMsg.textContent = '⚠️ Error connecting to backend.';
+        responseMsg.className = 'error';
+      });
+    });
+
+    /* ==========================================================
+       Floating chat → feedback modal with countdown
+      ========================================================== */
+    chatBtn.addEventListener('click', () => {
+      feedbackModal.classList.add('active');
+      let count = 5;
+      countdownEl.textContent = count;
+      const timer = setInterval(() => {
+        count--;
+        if (count === 0) {
+          clearInterval(timer);
+          feedbackModal.classList.remove('active');
+          window.open('https://github.com/OpenThoughtVoice/OpenThoughtVoice/discussions/7', '_blank');
+        } else {
+          countdownEl.textContent = count;
+        }
+      }, 1000);
+    });
+
+    feedbackModal.addEventListener('click', e => {
+      if (e.target === feedbackModal) feedbackModal.classList.remove('active');
+    });
+
+    /* ==========================================================
+       Open Buy view automatically when an item_id is present in URL
+      ========================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('item_id')) {
+        // Force the buy view – the scroll will happen after items load
+        buyBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
